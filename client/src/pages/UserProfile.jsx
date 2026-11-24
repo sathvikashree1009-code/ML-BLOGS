@@ -47,14 +47,20 @@ export default function UserProfile() {
             {(profile.name || 'U').charAt(0).toUpperCase()}
           </div>
           <div className="flex-1">
-            <h1 className="text-2xl font-bold tracking-tight">{profile.name}</h1>
+            <h1 className="text-2xl font-bold tracking-tight">{profile.fullName || profile.name}</h1>
             <p className="text-sm text-gray-500 dark:text-gray-400">@{profile.username}</p>
             {profile.bio && <p className="mt-2 text-gray-700 dark:text-gray-300">{profile.bio}</p>}
+            <div className="mt-3 flex flex-wrap gap-3 text-sm text-gray-600 dark:text-gray-400">
+              {profile.location && <span>📍 {profile.location}</span>}
+              {profile.contact && <span>📞 {profile.contact}</span>}
+              {profile.linkedin && <a href={profile.linkedin} target="_blank" rel="noreferrer" className="text-blue-600 dark:text-blue-400 hover:underline">LinkedIn</a>}
+              {profile.githubUsername && <a href={`https://github.com/${profile.githubUsername}`} target="_blank" rel="noreferrer" className="text-blue-600 dark:text-blue-400 hover:underline">GitHub</a>}
+              {profile.website && <a href={profile.website} target="_blank" rel="noreferrer" className="text-blue-600 dark:text-blue-400 hover:underline">Website</a>}
+            </div>
             <div className="mt-3 flex flex-wrap gap-4 text-sm text-gray-600 dark:text-gray-400">
               <span><b className="text-gray-900 dark:text-gray-100">{counts.followers}</b> followers</span>
               <span><b className="text-gray-900 dark:text-gray-100">{counts.following}</b> following</span>
               <span className="px-2 py-0.5 rounded-full bg-blue-100 dark:bg-blue-900/40 text-blue-700 dark:text-blue-300 text-xs font-medium capitalize">{profile.skillLevel}</span>
-              {profile.githubUsername && <a href={`https://github.com/${profile.githubUsername}`} target="_blank" rel="noreferrer" className="text-blue-600 dark:text-blue-400 hover:underline">GitHub</a>}
             </div>
           </div>
           {user && user.id !== profile.id && (

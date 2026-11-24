@@ -6,13 +6,13 @@ import BlogCard from '../components/BlogCard';
 export default function Profile() {
   const { user } = useAuth();
   const [blogs, setBlogs] = useState([]);
-  const [form, setForm] = useState({ name: user?.name || '', bio: '', avatar: '', githubUsername: '' });
+  const [form, setForm] = useState({ name: user?.name || '', fullName: '', bio: '', avatar: '', contact: '', linkedin: '', githubUsername: '', website: '', location: '' });
   const [saved, setSaved] = useState(false);
   const [skill, setSkill] = useState(null);
 
   useEffect(() => {
     if (user) {
-      setForm({ name: user.name || '', bio: user.bio || '', avatar: user.avatar || '', githubUsername: user.githubUsername || '' });
+      setForm({ name: user.name || '', fullName: user.fullName || '', bio: user.bio || '', avatar: user.avatar || '', contact: user.contact || '', linkedin: user.linkedin || '', githubUsername: user.githubUsername || '', website: user.website || '', location: user.location || '' });
       api.get('/blogs', { params: { author: user.id } }).then((r) => setBlogs(r.data.blogs)).catch(() => {});
       api.get('/skill/me').then((r) => setSkill(r.data)).catch(() => {});
     }
@@ -57,11 +57,23 @@ export default function Profile() {
           </div>
         )}
 
+        {user.isVerified === false && (
+          <div className="mb-4 p-3 rounded-lg bg-yellow-50 dark:bg-yellow-950/30 border border-yellow-200 dark:border-yellow-900 text-yellow-700 dark:text-yellow-300 text-sm flex items-center justify-between">
+            <span>Email not verified.</span>
+            <button onClick={async () => { try { const { data } = await api.post('/auth/resend-verification'); alert(data.message + (data.token ? ' (dev token: ' + data.token + ')' : '')); } catch {} }} className="text-blue-600 dark:text-blue-400 font-medium hover:underline">Resend</button>
+          </div>
+        )}
         {saved && <p className="text-blue-600 dark:text-blue-400 text-sm mb-3">Saved!</p>}
         <form onSubmit={save} className="space-y-3">
-          <input className={inputCls} placeholder="Name" value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} />
+          <input className={inputCls} placeholder="Full name" value={form.fullName} onChange={(e) => setForm({ ...form, fullName: e.target.value })} />
+          <input className={inputCls} placeholder="Display name" value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} />
+          <input className={inputCls} placeholder="Email" value={user.email} disabled className="opacity-60 cursor-not-allowed" />
+          <input className={inputCls} placeholder="Contact number" value={form.contact} onChange={(e) => setForm({ ...form, contact: e.target.value })} />
+          <input className={inputCls} placeholder="Location" value={form.location} onChange={(e) => setForm({ ...form, location: e.target.value })} />
           <input className={inputCls} placeholder="Avatar URL" value={form.avatar} onChange={(e) => setForm({ ...form, avatar: e.target.value })} />
+          <input className={inputCls} placeholder="LinkedIn URL" value={form.linkedin} onChange={(e) => setForm({ ...form, linkedin: e.target.value })} />
           <input className={inputCls} placeholder="GitHub username" value={form.githubUsername} onChange={(e) => setForm({ ...form, githubUsername: e.target.value })} />
+          <input className={inputCls} placeholder="Website URL" value={form.website} onChange={(e) => setForm({ ...form, website: e.target.value })} />
           <textarea className={inputCls} rows={3} placeholder="Bio" value={form.bio} onChange={(e) => setForm({ ...form, bio: e.target.value })} />
           <button className="bg-blue-500 text-white px-5 py-2.5 rounded-lg font-medium hover:bg-blue-600 transition">Save profile</button>
         </form>
